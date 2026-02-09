@@ -1,0 +1,567 @@
+{
+  "info": {
+    "_postman_id": "0ebdeab3-f49f-4b0a-94c1-b4b676d6e4c0",
+    "name": "Teste API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41195532"
+  },
+  "item": [
+    {
+      "name": "01 - Criação de Pedidos",
+      "item": [
+        {
+          "name": "POST /orders (Happy Path)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Retornou id no response\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"id\");\r",
+                  "    pm.environment.set(\"currentOrderId\", jsonData.id);  // usa \"id\" do mock\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"TESTE-{{ $timestamp }}\",\r\n  \"customer\": \"Alexandre Teste\",\r\n  \"total\": 299.90,\r\n  \"status\": \"PENDING\",\r\n  \"code\": \"ORDER-{{ $timestamp }}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "{\r\n  \"id\": 1\r\n}\r\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Consulta de Pedidos",
+      "item": [
+        {
+          "name": "GET /orders/{{currentOrderId}} (Polling)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Retorna a url\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"url\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/anything/{{currentOrderId}}\n",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anything",
+                "{{currentOrderId}}\n"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/anything/{{currentOrderId}}\n",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "anything",
+                    "{{currentOrderId}}\n"
+                  ]
+                }
+              },
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n  \"url\": \"https://fake/orders/1\"\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Testes de Erro",
+      "item": [
+        {
+          "name": "POST /orders - Campos Obrigatórios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Rejeitou por campo obrigatório faltando\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"Falta-Campo-Obrigatorio-001\",\r\n  \"total\": 100.00\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "POST {{baseUrl}}/status/400\n",
+              "host": [
+                "POST {{baseUrl}}"
+              ],
+              "path": [
+                "status",
+                "400\n"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Missing Fields",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"orderId\": \"Falta-Campo-Obrigatorio-001\",\r\n  \"total\": 100.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "/status/400/missing-fields\n",
+                  "path": [
+                    "status",
+                    "400",
+                    "missing-fields\n"
+                  ]
+                }
+              },
+              "status": "Campos obrigatorios",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"campo obrigatório faltando\"\n}\n"
+            }
+          ]
+        },
+        {
+          "name": "POST /orders - Valor total negativo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Rejeitou total negativo\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"ERRO-TOTAL-NEGATIVO-001\",\r\n  \"customer\": \"Teste Erro\",\r\n  \"total\": -50.00\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/status/400/negative-total",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "status",
+                "400",
+                "negative-total"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Negative-total",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"orderId\": \"ERRO-TOTAL-NEGATIVO-001\",\r\n  \"customer\": \"Teste Erro\",\r\n  \"total\": -50.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/status/400/negative-total",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "status",
+                    "400",
+                    "negative-total"
+                  ]
+                }
+              },
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"valor total não pode ser negativo\"\r\n}\r\n"
+            }
+          ]
+        },
+        {
+          "name": "POST /orders - Valor total como string",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Rejeitou total como string\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"ERRO-TOTAL-STRING-001\",\r\n  \"customer\": \"Teste Erro\",\r\n  \"total\": \"cem reais\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/status/400/string-total",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "status",
+                "400",
+                "string-total"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "String-total",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"orderId\": \"ERRO-TOTAL-STRING-001\",\r\n  \"customer\": \"Teste Erro\",\r\n  \"total\": \"cem reais\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "/status/400/string-total",
+                  "path": [
+                    "status",
+                    "400",
+                    "string-total"
+                  ]
+                }
+              },
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"valor total deve ser numérico\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Idempotência",
+      "item": [
+        {
+          "name": "POST /orders - Teste de Idempotência-Criação",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Criou pedido - 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Idempotency-Key",
+                "value": "idemp-123",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"ORDER-001\",\r\n  \"customer\": \"Teste Idempotência\",\r\n  \"total\": 150\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /orders - Teste de Idempotência-Duplicidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const duplicated = pm.environment.get(\"duplicated\");\r",
+                  "\r",
+                  "if (duplicated === \"true\") {\r",
+                  "  pm.test(\"Rejeitou duplicado - 409 (simulado)\", function () {\r",
+                  "    pm.expect.fail(\"Simulação: pedido duplicado deveria retornar 409\");\r",
+                  "  });\r",
+                  "} else {\r",
+                  "  pm.test(\"Criou pedido - 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "  });\r",
+                  "}\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const orderId = pm.request.body.raw\r",
+                  "  ? JSON.parse(pm.request.body.raw).orderId\r",
+                  "  : null;\r",
+                  "\r",
+                  "if (orderId) {\r",
+                  "  const saved = pm.environment.get(\"lastOrderId\");\r",
+                  "\r",
+                  "  if (saved === orderId) {\r",
+                  "    pm.environment.set(\"duplicated\", \"true\");\r",
+                  "  } else {\r",
+                  "    pm.environment.set(\"duplicated\", \"false\");\r",
+                  "    pm.environment.set(\"lastOrderId\", orderId);\r",
+                  "  }\r",
+                  "}\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Idempotency-Key",
+                "value": "idemp-123",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"orderId\": \"ORDER-001\",\r\n  \"customer\": \"Teste Idempotência\",\r\n  \"total\": 150\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
