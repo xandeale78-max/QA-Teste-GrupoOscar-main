@@ -213,7 +213,7 @@
               }
             },
             "url": {
-              "raw": "POST {{baseUrl}}/status/400\n",
+              "raw": "{{baseUrl}}/status/400\n",
               "host": [
                 "POST {{baseUrl}}"
               ],
