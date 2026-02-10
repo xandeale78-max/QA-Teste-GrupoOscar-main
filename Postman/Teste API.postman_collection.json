@@ -239,7 +239,7 @@
                   }
                 },
                 "url": {
-                  "raw": "/status/400/missing-fields\n",
+                  "raw": "{{baseUrl}}/status/400/missing-fields\n",
                   "path": [
                     "status",
                     "400",
