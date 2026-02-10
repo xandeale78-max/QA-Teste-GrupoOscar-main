@@ -141,7 +141,15 @@ Rodar:
 
 Configurei um GitHub Actions que roda os testes do Newman automaticamente a cada push ou pull request.
 
-O relatório HTML pode ser baixado pelos Artifacts.
+Durante a execução do pipeline no GitHub Actions utilizando Newman, nem todos os testes foram aprovados, apesar de todos funcionarem corretamente no Postman Desktop.
+
+Essa inconsistência acontece devido à ausência de uma API real, sendo necessário utilizar mocks do Postman combinados com endpoints genéricos.
+
+Esse cenário gera comportamentos diferentes entre:
+
+Execução manual no Postman Desktop -> Todos os testes passaram normalmente
+
+Execução automatizada via Newman (CI) -> Tem uma regra mais rigida 
 
 Arquivo:
 
